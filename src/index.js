@@ -1,5 +1,6 @@
 import { app } from "./app.js";
 import connectDB from "./db/index.db.js";
+import seedAdminUsers from "./seeders/seedUser.js";
 
 
 
@@ -10,6 +11,7 @@ connectDB()
             throw err;
         })
 
+        seedAdminUsers() // call admin seeder
         app.listen(process.env.PORT || 8080, () => {
             console.log(`Server is running on port ${process.env.PORT}`);
         })
