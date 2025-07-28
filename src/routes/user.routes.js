@@ -5,9 +5,10 @@ import {
     loginUser, 
     logoutUser, 
     forgetPassword,
-    // refreshAccessToken, 
+    refreshAccessToken, 
     registerUser 
 } from "../controllers/user.controller.js"
+import { verifyJWT } from "../middlewares/auth.middleware.js"
 
 const router = Router()
 
@@ -33,18 +34,18 @@ router.route('/login').post( loginUser )
 // ------- secured route ------- // 
 
 // logout route
-// router.route('/logout').post( verifyJWT, logoutUser )
+router.route('/logout').post( verifyJWT, logoutUser )
 
 // refresh token route (endpoint)
-// router.route('/refresh-token').post( refreshAccessToken )
+router.route('/refresh-token').post( refreshAccessToken )
 
 // change current password route
-// router.route('/change-password').post( verifyJWT, forgetPassword )
+router.route('/change-password').post( verifyJWT, forgetPassword )
 
 // fetch current user route
-// router.route('/current-user').get( verifyJWT, getCurrentUser )
+router.route('/current-user').get( verifyJWT, getCurrentUser )
 
 // update account details route
-// router.route('/update-account').patch( verifyJWT, updateAccountDetails )
+router.route('/update-account').patch( verifyJWT, updateUserDetails )
 
 export default router

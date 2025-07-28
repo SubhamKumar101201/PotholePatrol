@@ -1,7 +1,7 @@
 import mongoose, { Schema } from "mongoose";
 import mongooseAggregatePaginate from "mongoose-aggregate-paginate-v2";
 
-const potholeSchema = new Schema({
+const reportSchema = new Schema({
 
     images: {
         type: [
@@ -30,11 +30,13 @@ const potholeSchema = new Schema({
             {
                 latitude: {
                     type: String,
-                    required: true
+                    required: true,
+                    trim: true
                 },
                 longitude: {
                     type: String,
-                    required: true
+                    required: true,
+                    trim: true
                 }
             }
         ]
@@ -83,6 +85,6 @@ function arrayLimit(val) {
     return val.length <= 5;
 }
 
-potholeSchema.plugin(mongooseAggregatePaginate);
+reportSchema.plugin(mongooseAggregatePaginate);
 
-export const Pothole = mongoose.model("Pothole", potholeSchema);
+export const Report = mongoose.model("Report", reportSchema);

@@ -11,7 +11,7 @@ connectDB()
             throw err;
         })
 
-        seedAdminUsers() // call admin seeder
+        //seedAdminUsers() // call admin seeder
         app.listen(process.env.PORT || 8080, () => {
             console.log(`Server is running on port ${process.env.PORT}`);
         })

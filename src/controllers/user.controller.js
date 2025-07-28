@@ -140,9 +140,9 @@ const logoutUser = asyncHandler(async (req, res) => {
 
 const updateUserDetails = asyncHandler(async (req, res) => {
 
-    const { email, name } = req.body
+    const { name } = req.body
 
-    if (!email?.trim() || !name?.trim()) {
+    if (!name?.trim()) {
         throw new ApiError(400, "Please provide all fields")
     }
 
@@ -150,7 +150,7 @@ const updateUserDetails = asyncHandler(async (req, res) => {
         req.user?._id,
         {
             $set: {
-                name: naem.trim()
+                name: name.trim()
             }
         },
         { new: true }
@@ -217,12 +217,48 @@ const getCurrentUser = asyncHandler(async (req, res) => {
         .json(new ApiResponse(200, req.user, "current user fetched successfully"))
 })
 
+// refresh access token controller
+
+const refreshAccessToken = asyncHandler( async (req,res) => {
+
+    const incomingRefreshToken  = req.cookies?.refreshToken || req.body?.refreshToken // get the refresh token from cookies or from body
+
+    if ( !incomingRefreshToken ) {
+        throw new ApiError(401, "Unauthorized request")
+    }
+    
+    const decodedToken = jwt.verify(incomingRefreshToken, process.env.REFRESH_TOKEN_SECRET)
+
+    const user = await User.findById(decodedToken?._id) // get the user from decoded refresh token 
+
+    if ( !user ) {
+        throw new ApiError(401, "Invalid refresh token")
+    }
+
+    if ( incomingRefreshToken !== user?.refreshToken ) {
+        throw new ApiError(401, "Refresh token is expired or used")
+    }
+
+    const { accessToken, refreshToken: newRefreshToken } = await generateAccessAndRefreshTokens(user._id)
+
+    return  res.status(200)
+                .cookie("accessToken", accessToken, options)
+                .cookie("refreshToken", newRefreshToken, options)
+                .json(
+                    new ApiResponse(200, {
+                        accessToken, newRefreshToken
+                    }, "Access token refreshed successfully")
+                )
+
+})
+
+
 export {
     getCurrentUser, 
     updateUserDetails,  
     loginUser, 
     logoutUser, 
     forgetPassword,
-    // refreshAccessToken, 
+    refreshAccessToken, 
     registerUser
 }
