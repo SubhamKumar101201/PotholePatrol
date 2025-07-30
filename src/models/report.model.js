@@ -26,20 +26,15 @@ const reportSchema = new Schema({
         }
     },
     location: {
-        type: [
-            {
-                latitude: {
-                    type: String,
-                    required: true,
-                    trim: true
-                },
-                longitude: {
-                    type: String,
-                    required: true,
-                    trim: true
-                }
-            }
-        ]
+        type: {
+            type: String,
+            enum: ['Point'],
+            required: true
+        },
+        coordinates: {
+            type: [Number], // [longitude,latitude] for GeoJSON standard
+            required: true
+        }
     },
     severity: {
         type: String,
@@ -80,6 +75,8 @@ const reportSchema = new Schema({
     timestamps: true
 
 });
+
+reportSchema.index({ location: '2dsphere' }); // For geospatial queries
 
 function arrayLimit(val) {
     return val.length <= 5;
